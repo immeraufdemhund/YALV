@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YALV.Samples", "YALV.Sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YALV.Core", "YALV.Core\YALV.Core.csproj", "{D8EFA045-5482-4BBA-A1BF-28667D5F4635}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YALV.Core.Tests", "YALV.Core.Tests\YALV.Core.Tests.csproj", "{0DE59604-C3B4-4BD5-B3D9-332854CC2367}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,14 @@ Global
 		{D8EFA045-5482-4BBA-A1BF-28667D5F4635}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8EFA045-5482-4BBA-A1BF-28667D5F4635}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D8EFA045-5482-4BBA-A1BF-28667D5F4635}.Release|x86.ActiveCfg = Release|Any CPU
+		{0DE59604-C3B4-4BD5-B3D9-332854CC2367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DE59604-C3B4-4BD5-B3D9-332854CC2367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DE59604-C3B4-4BD5-B3D9-332854CC2367}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0DE59604-C3B4-4BD5-B3D9-332854CC2367}.Debug|x86.Build.0 = Debug|Any CPU
+		{0DE59604-C3B4-4BD5-B3D9-332854CC2367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DE59604-C3B4-4BD5-B3D9-332854CC2367}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DE59604-C3B4-4BD5-B3D9-332854CC2367}.Release|x86.ActiveCfg = Release|Any CPU
+		{0DE59604-C3B4-4BD5-B3D9-332854CC2367}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
