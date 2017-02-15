@@ -18,12 +18,11 @@ namespace YALV
         public bool EditList()
         {
             bool res = false;
-            AddFolderPathVM _vm = new AddFolderPathVM(this);
-            using (_vm)
+            using (var viewModel = new AddFolderPathVM(this))
             {
-                this.DataContext = _vm;
-                this.ShowDialog();
-                res = _vm.ListChanged;
+                DataContext = viewModel;
+                ShowDialog();
+                res = viewModel.ListChanged;
             }
             return res;
         }

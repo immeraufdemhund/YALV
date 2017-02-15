@@ -20,9 +20,11 @@ namespace YALV.ViewModel
     public class MainWindowVM
         : BindableObject
     {
-        public MainWindowVM(IWinSimple win)
+        public MainWindowVM(IWinSimple win) : this(win, new PathItemService()) { }
+        public MainWindowVM(IWinSimple win, IPathItemService pathItemService)
         {
             _callingWin = win;
+            _pathItemService = pathItemService;
 
             CommandExit = new CommandRelay(commandExitExecute, p => true);
             CommandOpenFile = new CommandRelay(commandOpenFileExecute, commandOpenFileCanExecute);
@@ -1038,6 +1040,7 @@ namespace YALV.ViewModel
         #region Privates
 
         private IWinSimple _callingWin;
+        private readonly IPathItemService _pathItemService;
 
         private bool _loadingFileList = false;
 
@@ -1070,7 +1073,7 @@ namespace YALV.ViewModel
             IList<PathItem> folders = null;
             try
             {
-                folders = DataService.ParseFolderFile(path);
+                folders = _pathItemService.ParseFolderFile(path);
             }
             catch (Exception ex)
             {

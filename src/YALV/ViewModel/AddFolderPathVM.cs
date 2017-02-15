@@ -16,8 +16,14 @@ namespace YALV.ViewModel
         : BindableObject
     {
         public AddFolderPathVM(IWinSimple win)
+            : this(win, new PathItemService())
+        {
+        }
+
+        public AddFolderPathVM(IWinSimple win, IPathItemService pathItemService)
         {
             _callingWin = win;
+            _pathItemService = pathItemService;
 
             CommandExit = new CommandRelay(commandExitExecute, p => true);
             CommandSave = new CommandRelay(commandSaveExecute, commandSaveCanExecute);
@@ -30,7 +36,7 @@ namespace YALV.ViewModel
             ;
             try
             {
-                folders = DataService.ParseFolderFile(path);
+                folders = _pathItemService.ParseFolderFile(path);
             }
             catch (Exception ex)
             {
@@ -107,7 +113,7 @@ namespace YALV.ViewModel
                 
                 try
                 {
-                    DataService.SaveFolderFile(orderList, path);
+                    _pathItemService.SaveFolderFile(orderList, path);
                     MessageBox.Show(Resources.AddFolderPathVM_commandSaveExecute_SuccessMessage, Resources.AddFolderPathVM_commandSaveExecute_SuccessTitle, MessageBoxButton.OK, MessageBoxImage.Information);
                     ListChanged = true;
                 }
@@ -206,7 +212,8 @@ namespace YALV.ViewModel
 
         #region Privates
 
-        private IWinSimple _callingWin;
+        private readonly IWinSimple _callingWin;
+        private readonly IPathItemService _pathItemService;
 
         #endregion
     }
