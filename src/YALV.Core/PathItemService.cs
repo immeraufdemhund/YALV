@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
+using System.Xml.Serialization;
 using YALV.Core.Domain;
 
 namespace YALV.Core
@@ -14,85 +16,83 @@ namespace YALV.Core
 
     public class PathItemService : IPathItemService
     {
+        private readonly XmlSerializer _serializer;
+        private readonly XmlWriterSettings _xmlWriterSettings;
+        private readonly PathItemService_1_4 _oldPathItemService;
+
+        public PathItemService()
+        {
+            _xmlWriterSettings = new XmlWriterSettings
+            {
+                Indent = true,
+                OmitXmlDeclaration = true,
+            };
+            _serializer = new XmlSerializer(typeof(List<PathItem>));
+            _oldPathItemService = new PathItemService_1_4();
+        }
         public void SaveFolderFile(IList<PathItem> folders, string path)
         {
-            FileStream fileStream = null;
-            StreamWriter streamWriter = null;
             try
             {
-                if (folders != null)
+                if (folders == null)
+                    return;
+
+                using (var xmlWriter = XmlWriter.Create(path, _xmlWriterSettings))
                 {
-                    fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
-                    streamWriter = new StreamWriter(fileStream);
-                    foreach (PathItem item in folders)
-                    {
-                        string line = String.Format("<folder name=\"{0}\" path=\"{1}\" />", item.Name, item.Path);
-                        streamWriter.WriteLine(line);
-                    }
-                    streamWriter.Close();
-                    streamWriter = null;
-                    fileStream.Close();
-                    fileStream = null;
+                    _serializer.Serialize(xmlWriter, folders);
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.TraceError("Error saving Favorites list [{0}]:\r\n{1}\r\n{2}", path, ex.Message, ex.StackTrace);
+                Trace.TraceError("Error saving Favorites list [{0}]:\r\n{1}\r\n{2}", path, ex.Message, ex.StackTrace);
                 throw;
             }
-            finally
-            {
-                if (streamWriter != null)
-                    streamWriter.Close();
-                if (fileStream != null)
-                    fileStream.Close();
-            }
-
         }
 
         public IList<PathItem> ParseFolderFile(string path)
         {
-            FileStream fileStream = null;
-            StreamReader streamReader = null;
+            var result = new List<PathItem>();
+            var fileInfo = new FileInfo(path);
+            if (!fileInfo.Exists)
+                return null;
+
             try
             {
-                FileInfo fileInfo = new FileInfo(path);
-                if (!fileInfo.Exists)
-                    return null;
+                using (var streamReader = fileInfo.OpenRead())
+                {
+                    result.AddRange((List<PathItem>) _serializer.Deserialize(streamReader));
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                result.AddRange(_oldPathItemService.ParseFolderFile(fileInfo));
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error parsing Favorites list [{0}]:\r\n{1}\r\n{2}", path, ex.Message, ex.StackTrace);
+                throw;
+            }
 
-                fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                streamReader = new StreamReader(fileStream, true);
-                string sBuffer = String.Format("<root>{0}</root>", streamReader.ReadToEnd());
-                streamReader.Close();
-                streamReader = null;
-                fileStream.Close();
-                fileStream = null;
+            return result;
+        }
+    }
 
-                var stringReader = new StringReader(sBuffer);
-                var xmlTextReader = new XmlTextReader(stringReader) { Namespaces = false };
+    public class PathItemService_1_4
+    {
+        public IEnumerable<PathItem> ParseFolderFile(FileInfo fileInfo)
+        {
+            var settings = new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Fragment };
 
-                IList<PathItem> result = new List<PathItem>();
+            using (var fileStream = fileInfo.OpenRead())
+            using (var xmlTextReader = XmlReader.Create(fileStream, settings))
+            {
                 while (xmlTextReader.Read())
                 {
                     if ((xmlTextReader.NodeType != XmlNodeType.Element) || (xmlTextReader.Name != "folder"))
                         continue;
 
-                    PathItem item = new PathItem(xmlTextReader.GetAttribute("name"), xmlTextReader.GetAttribute("path"));
-                    result.Add(item);
+                    yield return new PathItem(xmlTextReader.GetAttribute("name"), xmlTextReader.GetAttribute("path"));
                 }
-                return result;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Trace.TraceError("Error parsing Favorites list [{0}]:\r\n{1}\r\n{2}", path, ex.Message, ex.StackTrace);
-                throw;
-            }
-            finally
-            {
-                if (streamReader != null)
-                    streamReader.Close();
-                if (fileStream != null)
-                    fileStream.Close();
             }
         }
     }
