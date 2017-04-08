@@ -12,14 +12,14 @@ namespace YALV
         public AddFolderPath()
         {
             InitializeComponent();
-            //this.Closing += delegate { _vm.Dispose(); };
         }
 
         public bool EditList()
         {
-            bool res = false;
+            var res = false;
             using (var viewModel = new AddFolderPathVM(this))
             {
+                //viewModel.Initialize();
                 DataContext = viewModel;
                 ShowDialog();
                 res = viewModel.ListChanged;

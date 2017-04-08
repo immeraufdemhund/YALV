@@ -13,6 +13,6 @@ namespace YALV.Core.Providers
             return this.GetEntries(dataSource, new FilterParams());
         }
 
-        public abstract IEnumerable<LogItem> GetEntries(string dataSource, FilterParams filter);                
+        public abstract IEnumerable<LogItem> GetEntries(string dataSource, FilterParams filter);
     }
 }

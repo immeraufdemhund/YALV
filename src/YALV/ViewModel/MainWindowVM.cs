@@ -1250,7 +1250,7 @@ namespace YALV.ViewModel
 
                     try
                     {
-                        var list = DataService.ParseLogFile(path);
+                        var list = DataService.ParseLogFile(path, SelectedFolder.EntriesType);
                         if (list != null)
                         {
                             res.AddRange(list);

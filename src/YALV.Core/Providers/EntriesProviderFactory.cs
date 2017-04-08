@@ -1,4 +1,3 @@
-using System;
 using YALV.Core.Domain;
 
 namespace YALV.Core.Providers
@@ -18,9 +17,11 @@ namespace YALV.Core.Providers
                 case EntriesProviderType.MsSqlServer:
                     return new MsSqlServerEntriesProvider();
 
+                case EntriesProviderType.Text:
+                    return new FileEntriesProvider();
+
                 default:
-                    var message = String.Format((string) "Type {0} not supported", (object) type);
-                    throw new NotImplementedException(message);
+                    return new NotImplementedEntriesProvider(type);
             }
         }
     }

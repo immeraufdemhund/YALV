@@ -4,11 +4,10 @@ using YALV.Common.Interfaces;
 
 namespace YALV.Common
 {
-    public class CommandRelay
-        : ICommandAncestor
+    public class CommandRelay : ICommandAncestor
     {
-        readonly protected Func<object, object> _execute;
-        readonly protected Predicate<object> _canExecute;
+        protected readonly Func<object, object> _execute;
+        protected readonly Predicate<object> _canExecute;
 
         public CommandRelay(Func<object, object> execute, Predicate<object> canExecute)
         {
@@ -32,8 +31,7 @@ namespace YALV.Common
 
         public void OnCanExecuteChanged()
         {
-            if (null != CanExecuteChanged)
-                CanExecuteChanged(this, EventArgs.Empty);
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
